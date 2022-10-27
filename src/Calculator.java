@@ -1,3 +1,5 @@
+package scr;
+
 import java.util.*;
 
 public class Calculator {
@@ -5,22 +7,12 @@ public class Calculator {
     private static Hashtable<Character, Integer> romanHashTable = new Hashtable<>();
     private final static TreeMap<Integer, String> romanTreeMap = new TreeMap<Integer, String>();
 
+    private static final int numberLimit = 2;
+
     static {
         romanHashTable.put('I',1);
         romanHashTable.put('X',10);
-        romanHashTable.put('C',100);
-        romanHashTable.put('M',1000);
         romanHashTable.put('V',5);
-        romanHashTable.put('L',50);
-        romanHashTable.put('D',500);
-        romanTreeMap.put(1000, "M");
-        romanTreeMap.put(900, "CM");
-        romanTreeMap.put(500, "D");
-        romanTreeMap.put(400, "CD");
-        romanTreeMap.put(100, "C");
-        romanTreeMap.put(90, "XC");
-        romanTreeMap.put(50, "L");
-        romanTreeMap.put(40, "XL");
         romanTreeMap.put(10, "X");
         romanTreeMap.put(9, "IX");
         romanTreeMap.put(5, "V");
@@ -53,13 +45,16 @@ public class Calculator {
     private static List<Part> parse(String inputString) {
         String[] splitedInputString = inputString.split(" ");
         List<Part> partList = new ArrayList<>();
-
+        int valueCount = 0;
         for (String part:
              splitedInputString) {
             if (Action.isAction(part)) {
                 char actionChar = part.charAt(0);
                 partList.add(new Action(actionChar));
             } else if (Value.isValue(part)) {
+                if (++valueCount > numberLimit) {
+                    throw new IllegalArgumentException("number limit is " + numberLimit);
+                }
                 if (Value.isRoman(part)) {
                     if (numberType == null) {
                         numberType = NumberType.ROMAN;
@@ -79,9 +74,14 @@ public class Calculator {
 
                     partList.add(new Value(Integer.parseInt(part)));
                 }
+                Value value = (Value) partList.get(partList.size()-1);
+                if (value.getValue() > 10 || value.getValue() < 1) {
+                    throw new IllegalArgumentException("number max value is 10 & min is 1");
+                }
             } else {
                 throw new IllegalArgumentException("writed wrong String");
             }
+
         }
         return partList;
     }

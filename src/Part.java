@@ -1,3 +1,5 @@
+package scr;
+
 interface Part {
 
 }

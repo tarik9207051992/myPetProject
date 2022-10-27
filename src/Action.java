@@ -1,3 +1,5 @@
+package scr;
+
 public class Action implements Part {
 
     private char actionChar;
